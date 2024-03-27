@@ -32,6 +32,29 @@ services:
     networks:
       - infra
 
+  # sonar:
+  #   container_name: sonar
+  #   image: sonarqube:latest
+  #   ports:
+  #     - 9000:9000
+  #   volumes:
+  #     - $CONFIG/sonarqube/data:/opt/sonarqube/data
+  #     - $CONFIG/sonarqube/logs:/opt/sonarqube/logs
+  #     - $CONFIG/sonarqube/extensions:/opt/sonarqube/extensions
+  #   environment:
+  #     - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+  #   networks:
+  #     - infra
+
+  artilleryio:
+    container_name: artilleryio
+    image: artilleryio/artillery:latest
+    # platform: linux/amd64
+    volumes:
+      - $CONFIG/artilleryio:/artillery
+    networks:
+      - infra
+
 networks:
   infra:
     driver: bridge
