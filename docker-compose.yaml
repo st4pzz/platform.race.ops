@@ -1,6 +1,6 @@
 # docker compose up -d --build --force-recreate
 version: '3.8'
-name: infra
+name: ops
 
 services:
 
@@ -8,7 +8,7 @@ services:
     container_name: jenkins
     build:
       dockerfile_inline: |
-        FROM jenkins/jenkins:jdk17
+        FROM jenkins/jenkins:jdk21
         USER root
         RUN apt-get update && apt-get install -y lsb-release
         RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
@@ -17,12 +17,14 @@ services:
           signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
           https://download.docker.com/linux/debian \
           $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
-        RUN apt-get update && apt-get install -y docker-ce
+        RUN apt-get update && apt-get install -y docker-ce maven
         RUN usermod -aG docker jenkins
-        USER jenkins
+      # RUN usermod -aG daemon jenkins
+      # RUN usermod -aG root jenkins
+      # USER jenkins
       # RUN jenkins-plugin-cli --plugins "blueocean docker-workflow"
     ports:
-      - 9000:8080
+      - 9080:8080
       - 50000:50000
     volumes:
       - $CONFIG/jenkins:/var/jenkins_home
@@ -32,28 +34,28 @@ services:
     networks:
       - infra
 
-  # sonar:
-  #   container_name: sonar
-  #   image: sonarqube:latest
-  #   ports:
-  #     - 9000:9000
-  #   volumes:
-  #     - $CONFIG/sonarqube/data:/opt/sonarqube/data
-  #     - $CONFIG/sonarqube/logs:/opt/sonarqube/logs
-  #     - $CONFIG/sonarqube/extensions:/opt/sonarqube/extensions
-  #   environment:
-  #     - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
-  #   networks:
-  #     - infra
-
-  artilleryio:
-    container_name: artilleryio
-    image: artilleryio/artillery:latest
-    # platform: linux/amd64
+  sonar:
+    container_name: sonar
+    image: sonarqube:latest
+    ports:
+      - 9000:9000
     volumes:
-      - $CONFIG/artilleryio:/artillery
+      - $CONFIG/sonarqube/data:/opt/sonarqube/data
+      - $CONFIG/sonarqube/logs:/opt/sonarqube/logs
+      - $CONFIG/sonarqube/extensions:/opt/sonarqube/extensions
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
     networks:
       - infra
+
+  # artilleryio:
+  #   container_name: artilleryio
+  #   image: artilleryio/artillery:latest
+  #   # platform: linux/amd64
+  #   volumes:
+  #     - $CONFIG/artilleryio:/artillery
+  #   networks:
+  #     - infra
 
 networks:
   infra:
