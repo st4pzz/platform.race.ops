@@ -18,22 +18,11 @@ A arquitetura do projeto utiliza uma abordagem de microserviços, onde cada comp
 ## Estrutura do Projeto
 
 ```
-platform.race.ops/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/
-│   │   │       └── example/
-│   │   │           └── ops/
-│   │   │               ├── controller/
-│   │   │               ├── model/
-│   │   │               ├── repository/
-│   │   │               └── service/
-│   └── resources/
-├── Jenkinsfile
-├── docker-compose.yml
+ops/
+├── k8s
+├── .gitignore
 ├── README.md
-└── pom.xml
+└── docker-compose.yaml
 ```
 
 ## Configuração e Execução
